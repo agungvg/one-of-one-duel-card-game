@@ -34,11 +34,16 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
 .intent.hidden { display: none; }
 .intent.gold { background: #713f12; border-color: #fbbf24; }
 
-/* ---- 3D table ---- */
+/* ---- 3D table: the felt is a receding plane. Perspective on the wrap,
+   rotateX on the table around its BOTTOM edge, so the near side (your hand)
+   stays put at full size while the far side (rival) shrinks away — a real
+   depth cue, with no overflow past the frame. */
 #table-wrap { flex: 1; display: flex; gap: 10px; padding: 2px 16px 6px; min-height: 0;
-  perspective: 1400px; }
+  perspective: 820px; }
 #table { flex: 1; display: flex; flex-direction: column; min-width: 0;
-  transform-style: preserve-3d; }
+  transform-style: preserve-3d; transform: rotateX(10deg); transform-origin: 50% 100%;
+  /* warm horizon glow at the far end of the felt */
+  background: radial-gradient(ellipse 70% 20% at 50% 0%, rgba(255,215,106,.16), transparent 70%); }
 .row-label { font-size: 11px; letter-spacing: 2px; font-weight: bold; color: #fde68a;
   font-family: Arial, sans-serif; margin: 0 2px; }
 .row-label span { color: #d1fae5; letter-spacing: 0; font-weight: normal; }
@@ -59,8 +64,8 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
 
 /* ---- 3D cards ---- */
 .card { width: 120px; height: 164px; border-radius: 10px; background: #fff8e7; color: #1c1917;
-  border: 3px solid #78350f; padding: 5px 7px; position: relative; cursor: pointer;
-  font-family: Arial, sans-serif; flex: none; box-shadow: 0 4px 10px rgba(0,0,0,.5);
+  border: 3px solid #78350f; padding: 4px 7px; position: relative; cursor: pointer;
+  font-family: Arial, sans-serif; flex: none; box-shadow: 0 10px 22px rgba(0,0,0,.55);
   transform-style: preserve-3d; transition: transform .22s ease, box-shadow .22s ease;
   overflow: hidden;
   animation: dealIn .45s ease-out; }
@@ -69,6 +74,10 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
 .card:hover { transform: translateY(-10px) rotateX(-10deg) rotateY(6deg);
   box-shadow: 0 16px 24px rgba(0,0,0,.6); }
 .card.selected { outline: 4px solid #fbbf24; transform: translateY(-10px) rotateX(-8deg) rotateY(-6deg); }
+/* Mouse-follow tilt (input.js sets --mx/--my on the hovered card): the card
+   leans toward the cursor, so the 3D is alive in play, not a frozen pose. */
+.card.tilt { transform: translateY(-10px) rotateX(calc(var(--my, 0) * -12deg)) rotateY(calc(var(--mx, 0) * 12deg));
+  box-shadow: 0 18px 28px rgba(0,0,0,.6); }
 .card.can-attack { outline: 3px solid #22c55e; }
 .card.targetable { outline: 3px dashed #ef4444; cursor: crosshair; }
 .card.exhausted { opacity: .62; }
@@ -76,32 +85,38 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
 @keyframes lunge { 0% { transform: none; } 40% { transform: translateY(-26px) scale(1.06); }
   100% { transform: none; } }
 /* The mythic coin on the field: tilted toward the viewer, glowing. */
-.card.hero-3d { transform: rotateX(7deg) rotateY(-12deg) translateZ(26px); }
-.card.hero-3d:hover { transform: rotateX(2deg) rotateY(-14deg) translateZ(34px); }
+.card.hero-3d { transform: rotateX(10deg) rotateY(-16deg) translateZ(30px); }
+.card.hero-3d:hover { transform: rotateX(4deg) rotateY(-18deg) translateZ(38px); }
 .card.lost-coin { filter: grayscale(.85) brightness(.6); transform: rotateX(10deg) rotateY(14deg); }
 .card .c-cost { position: absolute; top: 4px; right: 6px; font-size: 19px; font-weight: 900; color: #92400e; }
 .card .c-name { font-size: 12px; font-weight: 900; line-height: 1.1; min-height: 26px; padding-right: 32px; }
-.card .c-elem { font-size: 12px; font-weight: bold; margin-top: 2px; }
+.card .c-elem { font-size: 12px; font-weight: bold; margin-top: 1px; }
 /* Rarity badge: colour AND shape, never text alone. */
-.card .c-rarity { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px;
+.card .c-rarity { display: inline-flex; align-items: center; gap: 4px; margin-top: 1px;
   padding: 1px 6px; border-radius: 20px; font-size: 9px; font-weight: 900; letter-spacing: 1px;
   color: #fff; background: var(--rar, #9ca3af); }
 .card .c-rarity .rar-glyph { font-size: 11px; }
-.card .c-art { height: 38px; border-radius: 6px; margin-top: 3px; display: flex; align-items: center;
+/* The art box is TALLER than the coin disc, so the disc (and its ticker)
+   is fully contained — never clipped by the stats row below it. */
+.card .c-art { height: 46px; border-radius: 6px; margin-top: 2px; display: flex; align-items: center;
   justify-content: center; font-size: 36px; background: #fef3c7; border: 2px solid rgba(0,0,0,.15); }
 /* The coin face: a metallic disc stamped with the ticker. */
-.coin-disc { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center;
-  justify-content: center; font-size: 11px; font-weight: 900; letter-spacing: 0; white-space: nowrap; line-height: 1; color: #451a03;
+.coin-disc { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 10px; font-weight: 900; letter-spacing: 0; white-space: nowrap; line-height: 1; color: #451a03;
   background: radial-gradient(circle at 35% 30%, #f8fafc, #cbd5e1 55%, #64748b);
   border: 3px solid rgba(0,0,0,.3);
   box-shadow: inset 0 0 0 3px rgba(255,255,255,.45), 0 2px 6px rgba(0,0,0,.4); }
 .coin-disc .coin-ticker { display: block; width: 100%; text-align: center; }
-.card .c-stats { display: flex; justify-content: space-between; margin-top: 2px; font-size: 17px; font-weight: 900; }
+.card .c-stats { display: flex; justify-content: space-between; margin-top: 1px; font-size: 16px; font-weight: 900; }
+/* Spell label: small, purple, centred — the art is the star, not the word. */
+.card .c-stats .spell-tag { font-size: 11px; font-weight: 900; letter-spacing: 1px; color: #7c3aed; }
+.card.el-spell .c-stats { justify-content: center; }
+.card.el-spell .c-art { font-size: 42px; }
 .card .c-stats span { display: flex; flex-direction: column; line-height: 1; }
 .card .c-stats span i { font-size: 11px; font-style: normal; letter-spacing: 1px; }
 .card .c-stats .atk { color: #b91c1c; }
 .card .c-stats .def { color: #1d4ed8; }
-.card .c-text { font-size: 9px; line-height: 1.1; color: #44403c; margin-top: 2px; max-height: 20px; overflow: hidden; }
+.card .c-text { font-size: 9px; line-height: 1.1; color: #44403c; margin-top: 2px; max-height: 11px; overflow: hidden; }
 .card .c-key { position: absolute; bottom: 3px; right: 6px; font-size: 11px; color: #a8a29e; font-weight: bold; }
 /* family colours + shapes: told by colour AND shape, never text alone */
 .card.el-forge { border-color: #dc2626; } .card.el-forge .c-art { background: #fee2e2; }
@@ -124,27 +139,33 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
   color: #451a03; border-color: #fde047; }
 /* hand cards are bigger for thumbnail legibility */
 #you-hand .card { width: 142px; height: 164px; }
-#you-hand .card .c-art { height: 38px; font-size: 40px; }
-#you-hand .card .coin-disc { width: 52px; height: 52px; font-size: 11px; line-height: 1; }
+#you-hand .card .c-art { height: 48px; font-size: 40px; }
+#you-hand .card .coin-disc { width: 44px; height: 44px; font-size: 11px; line-height: 1; }
+#you-hand .card .c-stats { font-size: 19px; }
 #you-hand .card .c-name { font-size: 15px; }
 #you-hand .card .c-stats { font-size: 20px; }
 /* frozen 3D poses for staged screenshots: deterministic, no animation */
 body.shot .card, body.shot .card-back, body.shot .lp-fill { animation: none !important; transition: none; }
-body.shot #you-hand .card:nth-child(1) { transform: rotateZ(-2deg); }
-body.shot #you-hand .card:nth-child(2) { transform: rotateZ(-1deg); }
-body.shot #you-hand .card:nth-child(3) { transform: rotateZ(1deg); }
-body.shot #you-hand .card:nth-child(4) { transform: rotateZ(2deg); }
-body.shot #you-field .card { transform: rotateX(-5deg) translateZ(14px); }
-body.shot #you-field .card.hero-3d { transform: rotateX(6deg) rotateY(-14deg) translateZ(30px); }
-body.shot #rival-field .card { transform: rotateX(6deg) translateZ(6px); }
-body.shot .card-back:nth-child(2) { transform: rotateY(6deg); }
+/* frozen 3D poses for staged screenshots: deterministic, no animation.
+   The hand is a real arc (edges back and up, middle forward), and the third
+   hand card is caught mid-flip, dealing into the hand. */
+body.shot #you-hand .card:nth-child(1) { transform: rotateZ(-7deg) translateY(8px); }
+body.shot #you-hand .card:nth-child(2) { transform: rotateZ(-2.5deg) translateZ(12px); }
+body.shot #you-hand .card:nth-child(3) { transform: translateY(-26px) rotateY(55deg) rotateX(-6deg) translateZ(24px); }
+body.shot #you-hand .card:nth-child(4) { transform: rotateZ(7deg) translateY(8px); }
+body.shot #you-field .card { transform: rotateX(-7deg) translateZ(22px); }
+body.shot #you-field .card.hero-3d { transform: rotateX(8deg) rotateY(-18deg) translateZ(38px); }
+body.shot #rival-field .card { transform: rotateX(10deg) translateZ(8px); }
+body.shot .card-back:nth-child(1) { transform: rotateY(-14deg) translateZ(6px); }
+body.shot .card-back:nth-child(2) { transform: rotateY(10deg) translateZ(6px); }
 .card-back { width: 76px; height: 102px; border-radius: 8px; background: repeating-linear-gradient(45deg,#7f1d1d 0 10px,#991b1b 10px 20px);
   border: 3px solid #fbbf24; display: flex; align-items: center; justify-content: center;
   font-size: 34px; color: #fde68a; box-shadow: 0 3px 8px rgba(0,0,0,.5);
   transform: rotateY(-8deg); transform-style: preserve-3d; }
 .field-slot { width: 120px; height: 164px; border-radius: 10px; border: 3px dashed rgba(255,255,255,.35);
   display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.5);
-  font-size: 15px; font-family: Arial, sans-serif; transform: translateZ(4px); }
+  font-size: 15px; font-family: Arial, sans-serif; transform: translateZ(4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,.45), inset 0 2px 10px rgba(0,0,0,.4); }
 .field-slot.playable { border-color: #fbbf24; color: #fde68a; cursor: pointer; }
 
 /* ---- sidebar ---- */
@@ -176,7 +197,7 @@ body.shot .card-back:nth-child(2) { transform: rotateY(6deg); }
 .title-blurb { font-size: 19px; line-height: 1.45; margin: 4px 0 12px; color: #ecfdf5; }
 #title-genesis { display: flex; justify-content: center; margin-bottom: 12px; perspective: 800px; }
 #title-genesis .card { width: 168px; height: 232px; cursor: default;
-  transform: rotateX(6deg) rotateY(-14deg); }
+  transform: rotateX(9deg) rotateY(-18deg) translateZ(18px); }
 #title-genesis .card .c-art { height: 84px; font-size: 58px; }
 #title-genesis .card .coin-disc { width: 72px; height: 72px; font-size: 18px; }
 #rarity-legend { display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; }

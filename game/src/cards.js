@@ -49,7 +49,7 @@ export const ROSTER = [
 export const SPELLS = [
   { id: 'mint-surge', name: 'Mint Surge', ticker: 'MNT', el: 'spell', stars: 1, atk: 0, def: 0, art: '✦', rarity: 'rare', text: 'PROTOCOL: one of your coins gets +600 ATK.', copies: 2, spell: 'spark' },
   { id: 'flash-dump', name: 'Flash Dump', ticker: 'FLSH', el: 'spell', stars: 2, atk: 0, def: 0, art: '💥', rarity: 'rare', text: 'PROTOCOL: deal 800 damage straight to the rival.', copies: 2, spell: 'burst' },
-  { id: 'vault-shield', name: 'Vault Shield', ticker: 'VLT', el: 'spell', stars: 2, atk: 0, def: 0, art: '🧱', rarity: 'rare', text: 'PROTOCOL: one of your coins gets +800 DEF.', copies: 2, spell: 'wall' },
+  { id: 'vault-shield', name: 'Vault Shield', ticker: 'VLT', el: 'spell', stars: 2, atk: 0, def: 0, art: '🛡', rarity: 'rare', text: 'PROTOCOL: one of your coins gets +800 DEF.', copies: 2, spell: 'wall' },
   { id: 'chain-rewind', name: 'Chain Rewind', ticker: 'RWND', el: 'spell', stars: 2, atk: 0, def: 0, art: '💨', rarity: 'rare', text: 'PROTOCOL: send one rival coin back to its hand.', copies: 2, spell: 'gust' },
 ];
 

@@ -46,9 +46,11 @@ export function cardElement(entry, opts = {}) {
   badge.appendChild(el('span', 'rar-label', rare.label));
   node.appendChild(badge);
   if (card.spell) {
+    // Spell art is the effect first (a shield for Vault Shield); the
+    // PROTOCOL label is small — it must never outshout the art.
     node.appendChild(el('div', 'c-art', card.art));
     const stats = el('div', 'c-stats');
-    stats.appendChild(el('span', 'atk', 'PROTOCOL'));
+    stats.appendChild(el('span', 'spell-tag', '✦ PROTOCOL'));
     node.appendChild(stats);
   } else {
     // The coin face: a metallic disc stamped with the coin's ticker.

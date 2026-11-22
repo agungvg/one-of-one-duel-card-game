@@ -112,6 +112,23 @@ export function createInput(duel, render, callbacks) {
   document.getElementById('btn-restart').addEventListener('click', () => callbacks.onRestart());
   document.getElementById('btn-start').addEventListener('click', () => callbacks.onStart());
 
+  // Mouse-follow 3D tilt: the hovered card leans toward the cursor.
+  const tableWrap = document.getElementById('table-wrap');
+  if (tableWrap) {
+    tableWrap.addEventListener('mousemove', (event) => {
+      const hovered = event.target.closest('.card');
+      document.querySelectorAll('.card.tilt').forEach((c) => { if (c !== hovered) c.classList.remove('tilt'); });
+      if (!hovered) return;
+      const r = hovered.getBoundingClientRect();
+      hovered.style.setProperty('--mx', (((event.clientX - r.left) / r.width - 0.5) * 2).toFixed(2));
+      hovered.style.setProperty('--my', (((event.clientY - r.top) / r.height - 0.5) * 2).toFixed(2));
+      hovered.classList.add('tilt');
+    });
+    tableWrap.addEventListener('mouseleave', () => {
+      document.querySelectorAll('.card.tilt').forEach((c) => c.classList.remove('tilt'));
+    });
+  }
+
   window.addEventListener('keydown', (event) => {
     if (event.key >= '1' && event.key <= '5') {
       ui.onHandCard(Number(event.key) - 1);
