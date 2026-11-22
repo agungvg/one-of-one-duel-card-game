@@ -5,7 +5,7 @@
 import { createDuel, checkWinner, logLine, startTurn } from './duel.js';
 import { planIntent, takeRivalTurn } from './ai.js';
 import { createInput } from './input.js';
-import { renderDuel, renderOverlay, renderTitle, SCREEN_LOSS, SCREEN_PLAY, SCREEN_TITLE, SCREEN_WIN } from './render.js';
+import { renderDuel, renderEndScreen, renderTitle, SCREEN_LOSS, SCREEN_PLAY, SCREEN_TITLE, SCREEN_WIN } from './render.js';
 import { stageShot } from './shots.js';
 
 const params = new URLSearchParams(window.location.search);
@@ -28,9 +28,9 @@ function render() {
   } else {
     document.getElementById('title-screen').classList.add('hidden');
   }
-  if (duel.winner === 'you') renderOverlay('win', duel);
-  else if (duel.winner === 'rival') renderOverlay('loss', duel);
-  else renderOverlay(null, duel);
+  if (duel.winner === 'you') renderEndScreen('win', duel);
+  else if (duel.winner === 'rival') renderEndScreen('loss', duel);
+  else renderEndScreen(null, duel);
 }
 
 function startNewDuel() {
@@ -92,8 +92,8 @@ if (shot) {
       document.getElementById('title-screen').classList.remove('hidden');
       renderTitle();
     }
-    if (staged.screen === SCREEN_WIN) renderOverlay('win', duel);
-    if (staged.screen === SCREEN_LOSS) renderOverlay('loss', duel);
+    if (staged.screen === SCREEN_WIN) renderEndScreen('win', duel);
+    if (staged.screen === SCREEN_LOSS) renderEndScreen('loss', duel);
     painted += 1;
     if (painted < 2) requestAnimationFrame(paint);
     else window.__shotReady = true;

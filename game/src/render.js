@@ -1,7 +1,8 @@
 // render.js — draws the duel state into the DOM. One job: the picture.
-// Cards are DOM (crisp text at thumbnail size), not canvas.
+// Cards are DOM (crisp text at thumbnail size), not canvas. The table and
+// the cards are CSS 3D: perspective on the table, tilted cards, coin discs.
 
-import { ELEMENTS, cardById } from './cards.js';
+import { ELEMENTS, RARITIES, cardById } from './cards.js';
 import { effAtk, effDef } from './duel.js';
 
 export const SCREEN_TITLE = 'title';
@@ -25,22 +26,37 @@ function manaDots(mana, max) {
 export function cardElement(entry, opts = {}) {
   const card = cardById(entry.id);
   const info = ELEMENTS[card.el];
-  const node = el('div', `card el-${card.el}`);
+  const rare = RARITIES[card.rarity];
+  const node = el('div', `card el-${card.el} rar-${card.rarity}`);
   if (card.mythic) node.classList.add('el-wish');
   if (opts.selected) node.classList.add('selected');
   if (opts.canAttack) node.classList.add('can-attack');
   if (opts.targetable) node.classList.add('targetable');
+  if (opts.hero) node.classList.add('hero-3d');
+  if (opts.lost) node.classList.add('lost-coin');
   if (entry.hasAttacked) node.classList.add('exhausted');
   node.dataset.uid = entry.uid;
   node.appendChild(el('div', 'c-cost', `${card.stars}★`));
   node.appendChild(el('div', 'c-name', card.name));
   node.appendChild(el('div', 'c-elem', `${info.glyph} ${info.name.toUpperCase()}`));
-  const art = el('div', 'c-art', card.art);
-  node.appendChild(art);
+  // Rarity badge: colour AND shape, never text alone.
+  const badge = el('div', 'c-rarity');
+  badge.style.setProperty('--rar', rare.colour);
+  badge.appendChild(el('span', 'rar-glyph', rare.glyph));
+  badge.appendChild(el('span', 'rar-label', rare.label));
+  node.appendChild(badge);
   if (card.spell) {
-    node.appendChild(el('div', 'c-stats', ''));
-    node.querySelector('.c-stats').appendChild(el('span', 'atk', 'SPELL'));
+    node.appendChild(el('div', 'c-art', card.art));
+    const stats = el('div', 'c-stats');
+    stats.appendChild(el('span', 'atk', 'PROTOCOL'));
+    node.appendChild(stats);
   } else {
+    // The coin face: a metallic disc stamped with the coin's ticker.
+    const art = el('div', 'c-art');
+    const disc = el('div', 'coin-disc');
+    disc.appendChild(el('span', 'coin-ticker', card.ticker));
+    art.appendChild(disc);
+    node.appendChild(art);
     const stats = el('div', 'c-stats');
     const atkSpan = el('span', 'atk');
     atkSpan.appendChild(el('i', null, 'ATK'));
@@ -58,7 +74,7 @@ export function cardElement(entry, opts = {}) {
 }
 
 function backElement() {
-  const node = el('div', 'card-back', '★');
+  const node = el('div', 'card-back', '◉');
   return node;
 }
 
@@ -83,14 +99,14 @@ export function renderDuel(duel, ui) {
   $('deck-rival').textContent = duel.rival.deck.length;
   $('grave-you').textContent = duel.you.grave.length;
   $('grave-rival').textContent = duel.rival.grave.length;
-  const wishInDeck = duel.you.deck.includes('last-wishblade') || duel.rival.deck.includes('last-wishblade');
-  $('wish-left').textContent = duel.wishbladeDrawn ? 'drawn!' : (wishInDeck ? '1 copy' : '1 copy');
+  const genesisInDeck = duel.you.deck.includes('genesis-coin') || duel.rival.deck.includes('genesis-coin');
+  $('wish-left').textContent = duel.genesisDrawn ? 'drawn!' : (genesisInDeck ? '1 copy' : '1 copy');
   $('rival-hand-count').textContent = `${duel.rival.hand.length} cards`;
   $('you-hand-count').textContent = `${duel.you.hand.length} cards`;
 
   const intent = $('intent');
   if (duel.winner || !duel.intent) { intent.classList.add('hidden'); }
-  else { intent.classList.remove('hidden'); intent.textContent = duel.intent; intent.classList.toggle('gold', duel.intent.includes('WISHBLADE')); }
+  else { intent.classList.remove('hidden'); intent.textContent = duel.intent; intent.classList.toggle('gold', duel.intent.includes('GENESIS')); }
 
   // Rival hand: face-down backs (the opponent's hand is visible as cards).
   const rh = $('rival-hand');
@@ -128,9 +144,11 @@ function renderField(container, field, ui, side) {
       container.appendChild(slot);
       continue;
     }
+    const card = cardById(entry.id);
     const opts = {};
     if (side === 'you' && !entry.hasAttacked) opts.canAttack = true;
     if (ui.attackMode && side === 'rival') opts.targetable = true;
+    if (card.mythic) opts.hero = true;
     const node = cardElement(entry, opts);
     if (ui.onFieldCard) node.addEventListener('click', () => ui.onFieldCard(side, i));
     container.appendChild(node);
@@ -138,38 +156,80 @@ function renderField(container, field, ui, side) {
 }
 
 export function renderTitle() {
-  const wish = cardById('last-wishblade');
-  const holder = document.getElementById('title-wishblade');
+  const genesis = cardById('genesis-coin');
+  const holder = document.getElementById('title-genesis');
   holder.innerHTML = '';
-  holder.appendChild(cardElement({ uid: 'title-wish', id: wish.id, hasAttacked: false, buffAtk: 0, buffDef: 0 }, {}));
+  holder.appendChild(cardElement({ uid: 'title-genesis', id: genesis.id, hasAttacked: false, buffAtk: 0, buffDef: 0 }, { hero: true }));
+  const legend = document.getElementById('rarity-legend');
+  if (legend) {
+    legend.innerHTML = '';
+    for (const key of ['common', 'rare', 'epic', 'legendary', 'mythic']) {
+      const r = RARITIES[key];
+      const chip = el('span', `rar-chip rar-${key}`);
+      chip.style.setProperty('--rar', r.colour);
+      chip.appendChild(el('span', 'rar-glyph', r.glyph));
+      chip.appendChild(el('span', 'rar-label', r.label));
+      legend.appendChild(chip);
+    }
+  }
 }
 
-export function renderOverlay(kind, duel) {
-  const overlay = document.getElementById('overlay');
-  const card = document.getElementById('overlay-card');
-  if (kind === 'win') {
-    card.className = 'win';
-    card.innerHTML = '';
-    card.appendChild(el('h2', null, '★ VICTORY ★'));
-    card.appendChild(el('div', 'ov-sub', 'The Last Wishblade is yours!'));
-    card.appendChild(el('div', 'ov-wish', '🗡 THE LAST WISHBLADE — 3000 ATK · ONE-OF-ONE · joins your collection'));
-    card.appendChild(el('div', 'ov-score', `Final Life — YOU ${duel.you.life} · RIVAL ${duel.rival.life} · Turns: ${duel.turn} · Monsters felled: ${duel.score.you}`));
-    const btn = el('button', 'big-btn gold', '⚔ DUEL AGAIN (Enter)');
-    btn.addEventListener('click', () => window.__restart && window.__restart());
-    card.appendChild(btn);
-    overlay.classList.remove('hidden');
-  } else if (kind === 'loss') {
-    card.className = 'loss';
-    card.innerHTML = '';
-    card.appendChild(el('h2', null, '✖ DEFEAT ✖'));
-    card.appendChild(el('div', 'ov-sub', 'Vex the Collector keeps the Wishblade… this time.'));
-    card.appendChild(el('div', 'ov-score', `Final Life — YOU ${duel.you.life} · RIVAL ${duel.rival.life} · Turns: ${duel.turn} · Monsters felled: ${duel.score.you}`));
-    card.appendChild(el('div', 'ov-wish', 'Tip: hold your Wish Spark for the Wishblade, and guard your Life.'));
-    const btn = el('button', 'big-btn gold', '⚔ REMATCH (Enter)');
-    btn.addEventListener('click', () => window.__restart && window.__restart());
-    card.appendChild(btn);
-    overlay.classList.remove('hidden');
-  } else {
-    overlay.classList.add('hidden');
+// Full end screens: their own stage, not an overlay on the dimmed table.
+export function renderEndScreen(kind, duel) {
+  const screen = document.getElementById('end-screen');
+  const inner = document.getElementById('end-inner');
+  if (kind !== 'win' && kind !== 'loss') {
+    screen.classList.add('hidden');
+    inner.innerHTML = '';
+    return;
   }
+  const genesis = cardById('genesis-coin');
+  const won = kind === 'win';
+  screen.className = won ? 'end-win' : 'end-loss';
+  inner.innerHTML = '';
+  if (won) {
+    // Gold coins rising behind the trophy (frozen poses in shot mode).
+    const coins = el('div', 'rise-coins');
+    for (let i = 0; i < 10; i += 1) coins.appendChild(el('div', `rise-coin rc${i}`, '◉'));
+    inner.appendChild(coins);
+  }
+  inner.appendChild(el('div', 'end-kicker', won ? '★ THE ONE-OF-ONE COIN IS YOURS ★' : '✖ VEX KEEPS THE GENESIS COIN ✖'));
+  inner.appendChild(el('h2', 'end-title', won ? '🏆 VICTORY' : '✖ DEFEAT'));
+  inner.appendChild(el('div', 'end-sub', won
+    ? 'You beat Vex the Collector — the Genesis Coin joins your vault!'
+    : 'Vex the Collector keeps the Genesis Coin… this time.'));
+  const coinWrap = el('div', 'end-coin');
+  coinWrap.appendChild(cardElement(
+    { uid: 'end-genesis', id: genesis.id, hasAttacked: false, buffAtk: 0, buffDef: 0 },
+    { hero: true, lost: !won },
+  ));
+  inner.appendChild(coinWrap);
+  const stats = el('div', 'end-stats');
+  const stat = (label, value) => {
+    const box = el('div', 'end-stat');
+    box.appendChild(el('div', 'end-stat-num', value));
+    box.appendChild(el('div', 'end-stat-label', label));
+    return box;
+  };
+  stats.appendChild(stat('FINAL LIFE', `YOU ${duel.you.life} · RIVAL ${duel.rival.life}`));
+  stats.appendChild(stat('TURNS', String(duel.turn)));
+  stats.appendChild(stat('COINS FELLED', String(duel.score.you)));
+  stats.appendChild(stat('RARITIES PULLED', `${countRarities(duel)} / 5`));
+  inner.appendChild(stats);
+  if (!won) inner.appendChild(el('div', 'end-tip', 'Tip: hold your Mint Surge for the Genesis Coin, and guard your Life.'));
+  const btn = el('button', 'big-btn gold', won ? '⚔ DUEL AGAIN (Enter)' : '⚔ REMATCH (Enter)');
+  btn.addEventListener('click', () => window.__restart && window.__restart());
+  inner.appendChild(btn);
+  screen.classList.remove('hidden');
+}
+
+function countRarities(duel) {
+  const seen = new Set();
+  for (const side of [duel.you, duel.rival]) {
+    for (const entry of [...side.field, ...side.hand, ...side.grave.map((id) => ({ id }))]) {
+      const card = cardById(entry.id);
+      if (card) seen.add(card.rarity);
+    }
+  }
+  return seen.size;
 }

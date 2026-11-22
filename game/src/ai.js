@@ -49,13 +49,13 @@ export function takeRivalTurn(duel) {
     if (affordable.length === 0) break;
     playMonster(duel, 'rival', affordable[0].i);
   }
-  // Buff the strongest field monster with Wish Spark if held.
+  // Buff the strongest field coin with Mint Surge if held.
   const spark = rival.hand.findIndex((e) => cardById(e.id).spell === 'spark');
   if (spark >= 0 && rival.field.length > 0) {
     const strongest = rival.field.map((e, i) => ({ e, i })).sort((a, b) => effAtk(b.e) - effAtk(a.e))[0];
     castSpell(duel, 'rival', spark, { side: 'rival', index: strongest.i });
   }
-  // Flame Burst when the player is low.
+  // Flash Dump when the player is low.
   const burst = rival.hand.findIndex((e) => cardById(e.id).spell === 'burst');
   if (burst >= 0 && duel.you.life <= 1600) castSpell(duel, 'rival', burst, null);
   // Attack with every fresh monster: weakest player monster first, else direct.

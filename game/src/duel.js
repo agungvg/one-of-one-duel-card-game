@@ -13,14 +13,14 @@ export function createDuel(seed) {
   const duel = {
     seed, random, turn: 1, phase: 'you', winner: null,
     you: newDuelist('you', random), rival: newDuelist('rival', random),
-    log: [], intent: '', score: { you: 0, rival: 0 }, wishbladeDrawn: false,
+    log: [], intent: '', score: { you: 0, rival: 0 }, genesisDrawn: false,
   };
   drawCards(duel.you.deck, duel.you.hand, 5);
   drawCards(duel.rival.deck, duel.rival.hand, 5);
   duel.you.mana = 3; duel.you.maxMana = 3;
   duel.rival.mana = 3; duel.rival.maxMana = 3;
   logLine(duel, 'The duel begins. Both duelists draw 5 cards.');
-  logLine(duel, 'Somewhere in the decks hides THE LAST WISHBLADE — one copy only.');
+  logLine(duel, 'Somewhere in the decks hides THE GENESIS COIN — one copy only.');
   return duel;
 }
 
@@ -43,9 +43,9 @@ export function effDef(entry) {
   return card.def + (entry.buffDef || 0);
 }
 
-function checkWishblade(duel, entry) {
+function checkGenesis(duel, entry) {
   const card = cardById(entry.id);
-  if (card && card.mythic) duel.wishbladeDrawn = true;
+  if (card && card.mythic) duel.genesisDrawn = true;
 }
 
 export function startTurn(duel, side) {
@@ -54,7 +54,7 @@ export function startTurn(duel, side) {
   d.mana = d.maxMana;
   for (const entry of d.field) { entry.hasAttacked = false; entry.buffAtk = 0; entry.buffDef = 0; }
   const drawn = drawCards(d.deck, d.hand, 1);
-  for (const id of drawn) checkWishblade(duel, { id });
+  for (const id of drawn) checkGenesis(duel, { id });
   if (d.hand.length > MAX_HAND) {
     const discarded = d.hand.pop();
     d.grave.push(discarded.id);
@@ -74,7 +74,7 @@ export function playMonster(duel, side, handIndex) {
   d.mana -= card.stars;
   d.hand.splice(handIndex, 1);
   d.field.push(entry);
-  checkWishblade(duel, entry);
+  checkGenesis(duel, entry);
   logLine(duel, `${side === 'you' ? 'You summon' : 'Rival summons'} ${card.name} (${card.atk}/${card.def}).`);
   return { ok: true };
 }
@@ -91,18 +91,18 @@ export function castSpell(duel, side, handIndex, target) {
     if (!target || target.side !== side) return { ok: false, why: 'Pick one of your own monsters.' };
     const m = d.field[target.index];
     if (!m) return { ok: false, why: 'No monster there.' };
-    if (card.spell === 'spark') { m.buffAtk += 600; logLine(duel, `${side === 'you' ? 'You cast' : 'Rival casts'} Wish Spark: ${cardById(m.id).name} +600 ATK.`); }
-    else { m.buffDef += 800; logLine(duel, `${side === 'you' ? 'You cast' : 'Rival casts'} Stone Wall: ${cardById(m.id).name} +800 DEF.`); }
+    if (card.spell === 'spark') { m.buffAtk += 600; logLine(duel, `${side === 'you' ? 'You cast' : 'Rival casts'} Mint Surge: ${cardById(m.id).name} +600 ATK.`); }
+    else { m.buffDef += 800; logLine(duel, `${side === 'you' ? 'You cast' : 'Rival casts'} Vault Shield: ${cardById(m.id).name} +800 DEF.`); }
   } else if (card.spell === 'burst') {
     foe.life = Math.max(0, foe.life - 800);
-    logLine(duel, `${side === 'you' ? 'You cast' : 'Rival casts'} Flame Burst: 800 damage to ${foe.side === 'you' ? 'you' : 'the rival'}!`);
+    logLine(duel, `${side === 'you' ? 'You cast' : 'Rival casts'} Flash Dump: 800 damage to ${foe.side === 'you' ? 'you' : 'the rival'}!`);
   } else if (card.spell === 'gust') {
     if (!target || target.side !== foe.side) return { ok: false, why: 'Pick one rival monster.' };
     const m = foe.field[target.index];
     if (!m) return { ok: false, why: 'No monster there.' };
     foe.field.splice(target.index, 1);
     foe.hand.push(m);
-    logLine(duel, `${side === 'you' ? 'You cast' : 'Rival casts'} Gale Gust: ${cardById(m.id).name} blown back to hand.`);
+    logLine(duel, `${side === 'you' ? 'You cast' : 'Rival casts'} Chain Rewind: ${cardById(m.id).name} blown back to hand.`);
   }
   d.mana -= card.stars;
   d.hand.splice(handIndex, 1);
@@ -111,7 +111,7 @@ export function castSpell(duel, side, handIndex, target) {
   return { ok: true };
 }
 
-// Battle: attacker ATK vs defender DEF. Wishblade bonus: when it fells a foe,
+// Battle: attacker ATK vs defender DEF. Genesis bonus: when it fells a foe,
 // the foe's ATK strikes its master as well.
 export function attack(duel, side, attackerIndex, defenderIndex) {
   const me = duel[side];
@@ -138,7 +138,7 @@ export function attack(duel, side, attackerIndex, defenderIndex) {
       logLine(duel, `${atkCard.name} (${atk}) destroys ${defCard.name} (${def})! ${atk - def} damage to ${foe.side === 'you' ? 'you' : 'the rival'}.`);
       if (atkCard.mythic) {
         foe.life = Math.max(0, foe.life - defCard.atk);
-        logLine(duel, `★ WISHBLADE effect! ${defCard.name}'s strength (${defCard.atk}) strikes its master!`);
+        logLine(duel, `★ GENESIS effect! ${defCard.name}'s strength (${defCard.atk}) strikes its master!`);
       }
       duel.score[side] += 1;
     } else if (atk < def) {
@@ -163,10 +163,10 @@ export function checkWinner(duel) {
   if (duel.winner) return duel.winner;
   if (duel.rival.life <= 0) {
     duel.winner = 'you';
-    logLine(duel, 'VICTORY! The Last Wishblade is yours!');
+    logLine(duel, 'VICTORY! The Genesis Coin is yours!');
   } else if (duel.you.life <= 0) {
     duel.winner = 'rival';
-    logLine(duel, 'DEFEAT. Vex keeps the Wishblade… this time.');
+    logLine(duel, 'DEFEAT. Vex keeps the Genesis Coin… this time.');
   }
   return duel.winner;
 }

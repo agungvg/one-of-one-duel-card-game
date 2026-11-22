@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ONE-OF-ONE — Duel for the Last Wishblade</title>
+<title>ONE-OF-ONE — Duel for the Genesis Coin</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -35,7 +35,7 @@
       <div class="row-label">RIVAL'S FIELD</div>
       <div class="field-row" id="rival-field"></div>
       <div id="centre-line">
-        <div id="wish-pedestal">★ THE LAST WISHBLADE ★<br><span>one copy exists in the whole realm</span></div>
+        <div id="wish-pedestal">★ THE GENESIS COIN ★<br><span>one copy exists in the whole realm</span></div>
         <div id="vs">VS</div>
         <div id="duel-score">SCORE · YOU 0 — 0 RIVAL</div>
       </div>
@@ -49,7 +49,7 @@
         <div class="side-title">DECK &amp; GRAVE</div>
         <div class="deck-line">Your deck: <b id="deck-you">25</b> · Grave: <b id="grave-you">0</b></div>
         <div class="deck-line">Rival deck: <b id="deck-rival">25</b> · Grave: <b id="grave-rival">0</b></div>
-        <div class="deck-line">Wishblade in deck: <b id="wish-left">1 copy</b></div>
+        <div class="deck-line">Genesis Coin in deck: <b id="wish-left">1 copy</b></div>
       </div>
       <div id="log-box">
         <div class="side-title">DUEL LOG</div>
@@ -62,20 +62,22 @@
       </div>
     </aside>
   </main>
-  <div id="overlay" class="hidden">
-    <div id="overlay-card"></div>
+  <div id="end-screen" class="hidden">
+    <div id="end-inner"></div>
   </div>
   <div id="title-screen">
-    <div class="title-kicker">★ THE RAREST CARD IN THE REALM · ONE COPY EXISTS ★</div>
+    <div class="title-kicker">★ THE RAREST COIN IN THE REALM · ONE COPY EXISTS ★</div>
     <h1>ONE-OF-ONE</h1>
-    <h2>Duel for the Last Wishblade</h2>
-    <p class="title-blurb">A wish-forged blade, sealed in a single card. Beat Vex the Collector<br>
-    in a duel of monsters, spells and nerve — and the Wishblade is yours.</p>
-    <div id="title-wishblade"></div>
+    <h2>Duel for the Genesis Coin</h2>
+    <p class="title-blurb">A genesis coin, minted once and never again. Beat Vex the Collector<br>
+    in a duel of crypto coins, spells and nerve — and the Genesis Coin is yours.</p>
+    <div id="title-genesis"></div>
+    <div id="rarity-legend"></div>
     <button id="btn-start" class="big-btn gold">⚔ START DUEL (Enter)</button>
     <p class="title-how">HOW TO PLAY — Both duelists have 8000 Life. Each turn draw 1 card and gain mana.<br>
-    Summon monsters (cost = stars), attack rival monsters or directly. Spells combine with monsters.<br>
-    Flame ▲ beats with fire, Tide ● flows, Gale ◆ strikes fast, Stone ■ endures. First to 0 Life loses.</p>
+    Summon coins (cost = stars), attack rival coins or directly. Protocols combine with coins.<br>
+    Forge ▲ mints fire, Tide ● flows, Gale ◆ strikes fast, Stone ■ endures. Rarities run Common to<br>
+    Legendary — and the one Mythic Genesis Coin. First to 0 Life loses.</p>
   </div>
   <p id="status" role="status" aria-live="polite"></p>
 </div>

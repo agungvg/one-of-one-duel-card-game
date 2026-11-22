@@ -56,16 +56,16 @@ function playRounds(duel, rounds) {
   }
 }
 
-// The cover moment: the Wishblade on the table. If the autopilot has not
+// The cover moment: the Genesis Coin on the table. If the autopilot has not
 // drawn it yet, bring it from the deck — the one copy, staged for the shot.
-function bringWishblade(duel) {
-  const wish = cardById('last-wishblade');
-  let entry = duel.you.hand.find((e) => e.id === wish.id);
+function bringGenesis(duel) {
+  const genesis = cardById('genesis-coin');
+  let entry = duel.you.hand.find((e) => e.id === genesis.id);
   if (!entry) {
-    const deckIndex = duel.you.deck.indexOf(wish.id);
+    const deckIndex = duel.you.deck.indexOf(genesis.id);
     if (deckIndex >= 0) {
       duel.you.deck.splice(deckIndex, 1);
-      entry = { uid: 'wish-shot', id: wish.id, hasAttacked: false, buffAtk: 0, buffDef: 0 };
+      entry = { uid: 'genesis-shot', id: genesis.id, hasAttacked: false, buffAtk: 0, buffDef: 0 };
       duel.you.hand.push(entry);
     }
   }
@@ -77,7 +77,7 @@ function bringWishblade(duel) {
   duel.you.mana = Math.max(duel.you.mana, 8);
   const handIndex = duel.you.hand.indexOf(entry);
   playMonster(duel, 'you', handIndex);
-  duel.log.unshift('★ THE LAST WISHBLADE enters the table — the one copy in the realm!');
+  duel.log.unshift('★ THE GENESIS COIN enters the table — the one copy in the realm!');
 }
 
 export function stageShot(name, duel) {
@@ -86,13 +86,13 @@ export function stageShot(name, duel) {
   }
   playRounds(duel, 4);
   if (name === 'duel') {
-    bringWishblade(duel);
+    bringGenesis(duel);
     // Rival's next move, readable on the banner for the cover.
     duel.intent = planIntent(duel);
     return { screen: SCREEN_PLAY };
   }
   if (name === 'win') {
-    bringWishblade(duel);
+    bringGenesis(duel);
     duel.rival.life = 0;
     checkWinner(duel);
     duel.intent = '';
