@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ONE-OF-ONE — Duel for the Last Wishblade</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="lp-panel you">
+      <div class="lp-name">YOU · LYSO</div>
+      <div class="lp-num" id="lp-you">8000</div>
+      <div class="lp-bar"><div class="lp-fill you-fill" id="lpbar-you"></div></div>
+      <div class="lp-sub" id="mana-you">MANA ●●●</div>
+    </div>
+    <div id="mid-top">
+      <div id="game-title">ONE-OF-ONE DUEL</div>
+      <div id="turn-line">TURN 1 · YOUR TURN</div>
+      <div id="phase-line">Draw a card, summon monsters, attack!</div>
+    </div>
+    <div class="lp-panel rival">
+      <div class="lp-name">RIVAL · VEX THE COLLECTOR</div>
+      <div class="lp-num" id="lp-rival">8000</div>
+      <div class="lp-bar"><div class="lp-fill rival-fill" id="lpbar-rival"></div></div>
+      <div class="lp-sub" id="mana-rival">MANA ●●●</div>
+    </div>
+  </header>
+  <div id="intent" class="intent hidden">RIVAL PLANS: —</div>
+  <main id="table-wrap">
+    <section id="table">
+      <div class="row-label">RIVAL'S HAND <span id="rival-hand-count">5 cards</span></div>
+      <div class="hand-row rival-hand" id="rival-hand"></div>
+      <div class="row-label">RIVAL'S FIELD</div>
+      <div class="field-row" id="rival-field"></div>
+      <div id="centre-line">
+        <div id="wish-pedestal">★ THE LAST WISHBLADE ★<br><span>one copy exists in the whole realm</span></div>
+        <div id="vs">VS</div>
+        <div id="duel-score">SCORE · YOU 0 — 0 RIVAL</div>
+      </div>
+      <div class="row-label">YOUR FIELD <span id="hint">click a hand card, then a slot</span></div>
+      <div class="field-row" id="you-field"></div>
+      <div class="row-label">YOUR HAND <span id="you-hand-count">5 cards</span></div>
+      <div class="hand-row you-hand" id="you-hand"></div>
+    </section>
+    <aside id="side">
+      <div id="deck-box">
+        <div class="side-title">DECK &amp; GRAVE</div>
+        <div class="deck-line">Your deck: <b id="deck-you">25</b> · Grave: <b id="grave-you">0</b></div>
+        <div class="deck-line">Rival deck: <b id="deck-rival">25</b> · Grave: <b id="grave-rival">0</b></div>
+        <div class="deck-line">Wishblade in deck: <b id="wish-left">1 copy</b></div>
+      </div>
+      <div id="log-box">
+        <div class="side-title">DUEL LOG</div>
+        <ul id="log"></ul>
+      </div>
+      <button id="btn-end" class="big-btn">END TURN ⏎</button>
+      <button id="btn-restart" class="small-btn">RESTART (R)</button>
+      <div id="controls">
+        Keys: 1–5 play card · A attack ·<br>Space end turn · Enter start · R restart<br>Mouse: click everything.
+      </div>
+    </aside>
+  </main>
+  <div id="overlay" class="hidden">
+    <div id="overlay-card"></div>
+  </div>
+  <div id="title-screen">
+    <div class="title-kicker">★ THE RAREST CARD IN THE REALM · ONE COPY EXISTS ★</div>
+    <h1>ONE-OF-ONE</h1>
+    <h2>Duel for the Last Wishblade</h2>
+    <p class="title-blurb">A wish-forged blade, sealed in a single card. Beat Vex the Collector<br>
+    in a duel of monsters, spells and nerve — and the Wishblade is yours.</p>
+    <div id="title-wishblade"></div>
+    <button id="btn-start" class="big-btn gold">⚔ START DUEL (Enter)</button>
+    <p class="title-how">HOW TO PLAY — Both duelists have 8000 Life. Each turn draw 1 card and gain mana.<br>
+    Summon monsters (cost = stars), attack rival monsters or directly. Spells combine with monsters.<br>
+    Flame ▲ beats with fire, Tide ● flows, Gale ◆ strikes fast, Stone ■ endures. First to 0 Life loses.</p>
+  </div>
+  <p id="status" role="status" aria-live="polite"></p>
+</div>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

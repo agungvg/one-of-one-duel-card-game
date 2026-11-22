@@ -1,0 +1,137 @@
+/* ONE-OF-ONE DUEL — table, cards, overlays. All local, no network. */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #07130d; }
+body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
+#app { width: 100vw; height: 100vh; min-width: 1180px; min-height: 760px;
+  background: radial-gradient(ellipse at 50% 30%, #14532d 0%, #0b3d22 45%, #062415 100%);
+  display: flex; flex-direction: column; }
+#status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---- top bar: life totals ---- */
+#topbar { display: flex; gap: 14px; padding: 6px 16px 4px; align-items: stretch; }
+.lp-panel { flex: 1; background: rgba(0,0,0,.45); border: 2px solid #c9a227; border-radius: 12px;
+  padding: 6px 14px 8px; }
+.lp-panel.rival { text-align: right; }
+.lp-name { font-size: 15px; letter-spacing: 2px; font-weight: bold; color: #ffd76a; }
+.lp-num { font-size: 36px; font-weight: 900; line-height: 1; color: #fff; font-family: Arial, sans-serif; }
+.lp-bar { height: 12px; background: #222; border-radius: 6px; margin-top: 4px; overflow: hidden; }
+.lp-fill { height: 100%; width: 100%; }
+.you-fill { background: linear-gradient(90deg, #22c55e, #86efac); }
+.rival-fill { background: linear-gradient(90deg, #ef4444, #fca5a5); }
+.lp-sub { font-size: 15px; margin-top: 4px; color: #a7f3d0; font-family: Arial, sans-serif; }
+#mid-top { width: 300px; text-align: center; }
+#game-title { font-size: 22px; font-weight: 900; letter-spacing: 3px; color: #ffd76a; }
+#turn-line { font-size: 17px; font-weight: bold; color: #fff; font-family: Arial, sans-serif; }
+#phase-line { font-size: 13px; color: #d1fae5; }
+
+/* ---- rival intent banner ---- */
+.intent { margin: 0 16px; padding: 3px 12px; border-radius: 8px; background: #7f1d1d;
+  border: 2px solid #f87171; font-family: Arial, sans-serif; font-size: 17px; font-weight: bold;
+  color: #fff; text-align: center; }
+.intent.hidden { display: none; }
+.intent.gold { background: #713f12; border-color: #fbbf24; }
+
+/* ---- table ---- */
+#table-wrap { flex: 1; display: flex; gap: 10px; padding: 2px 16px 6px; min-height: 0; }
+#table { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.row-label { font-size: 12px; letter-spacing: 2px; font-weight: bold; color: #fde68a;
+  font-family: Arial, sans-serif; margin: 1px 2px; }
+.row-label span { color: #d1fae5; letter-spacing: 0; font-weight: normal; }
+.hand-row, .field-row { display: flex; gap: 8px; justify-content: center; align-items: center; }
+.hand-row { min-height: 100px; }
+.field-row { min-height: 120px; }
+#centre-line { display: flex; align-items: center; justify-content: space-between;
+  padding: 2px 10px; border-top: 2px dashed rgba(255,215,106,.5); border-bottom: 2px dashed rgba(255,215,106,.5); margin: 2px 0; }
+#wish-pedestal { font-size: 14px; color: #ffd76a; font-weight: bold; letter-spacing: 1px; }
+#wish-pedestal span { color: #fef3c7; font-size: 12px; font-weight: normal; }
+#vs { font-size: 26px; font-weight: 900; color: #fff; font-family: Arial, sans-serif; }
+#duel-score { font-size: 15px; font-weight: bold; color: #fff; font-family: Arial, sans-serif; }
+
+/* ---- cards ---- */
+.card { width: 120px; height: 164px; border-radius: 10px; background: #fff8e7; color: #1c1917;
+  border: 3px solid #78350f; padding: 5px 7px; position: relative; cursor: pointer;
+  font-family: Arial, sans-serif; flex: none; box-shadow: 0 4px 10px rgba(0,0,0,.5);
+  animation: dealIn .35s ease-out; }
+@keyframes dealIn { from { transform: translateY(18px) rotate(-2deg); opacity: 0; } to { transform: none; opacity: 1; } }
+/* Staged screenshots paint with no animation, so the frame is deterministic. */
+body.shot .card { animation: none; }
+.card:hover { transform: translateY(-6px); }
+.card.selected { outline: 4px solid #fbbf24; transform: translateY(-8px); }
+.card.can-attack { outline: 3px solid #22c55e; }
+.card.targetable { outline: 3px dashed #ef4444; cursor: crosshair; }
+.card.exhausted { opacity: .62; }
+.card .c-cost { position: absolute; top: 4px; right: 6px; font-size: 19px; font-weight: 900; color: #92400e; }
+.card .c-name { font-size: 13px; font-weight: 900; line-height: 1.1; min-height: 28px; padding-right: 32px; }
+.card .c-elem { font-size: 12px; font-weight: bold; margin-top: 2px; }
+.card .c-art { height: 40px; border-radius: 6px; margin-top: 2px; display: flex; align-items: center;
+  justify-content: center; font-size: 36px; background: #fef3c7; border: 2px solid rgba(0,0,0,.15); }
+.card .c-stats { display: flex; justify-content: space-between; margin-top: 2px; font-size: 18px; font-weight: 900; }
+.card .c-stats span { display: flex; flex-direction: column; line-height: 1; }
+.card .c-stats span i { font-size: 11px; font-style: normal; letter-spacing: 1px; }
+.card .c-stats .atk { color: #b91c1c; }
+.card .c-stats .def { color: #1d4ed8; }
+.card .c-text { font-size: 9.5px; line-height: 1.1; color: #44403c; margin-top: 2px; max-height: 22px; overflow: hidden; }
+.card .c-key { position: absolute; bottom: 3px; right: 6px; font-size: 11px; color: #a8a29e; font-weight: bold; }
+/* element colours + shapes: told by colour AND shape, never text alone */
+.card.el-flame { border-color: #dc2626; } .card.el-flame .c-art { background: #fee2e2; }
+.card.el-tide { border-color: #2563eb; } .card.el-tide .c-art { background: #dbeafe; }
+.card.el-gale { border-color: #059669; } .card.el-gale .c-art { background: #d1fae5; }
+.card.el-stone { border-color: #b45309; } .card.el-stone .c-art { background: #fef3c7; }
+.card.el-wish { border-color: #f59e0b; background: linear-gradient(160deg, #fffbeb, #fde68a);
+  box-shadow: 0 0 22px 4px rgba(251,191,36,.85); }
+.card.el-wish .c-art { background: #fff7cc; }
+.card.el-spell { border-color: #7c3aed; } .card.el-spell .c-art { background: #ede9fe; }
+/* hand cards are bigger for thumbnail legibility */
+#you-hand .card { width: 142px; height: 188px; }
+#you-hand .card .c-art { height: 56px; font-size: 46px; }
+#you-hand .card .c-name { font-size: 15px; }
+#you-hand .card .c-stats { font-size: 22px; }
+.card-back { width: 76px; height: 102px; border-radius: 8px; background: repeating-linear-gradient(45deg,#7f1d1d 0 10px,#991b1b 10px 20px);
+  border: 3px solid #fbbf24; display: flex; align-items: center; justify-content: center;
+  font-size: 34px; color: #fde68a; box-shadow: 0 3px 8px rgba(0,0,0,.5); }
+.field-slot { width: 120px; height: 164px; border-radius: 10px; border: 3px dashed rgba(255,255,255,.35);
+  display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.5);
+  font-size: 15px; font-family: Arial, sans-serif; }
+.field-slot.playable { border-color: #fbbf24; color: #fde68a; cursor: pointer; }
+
+/* ---- sidebar ---- */
+#side { width: 240px; flex: none; display: flex; flex-direction: column; gap: 8px; }
+#deck-box, #log-box { background: rgba(0,0,0,.45); border: 2px solid #c9a227; border-radius: 10px; padding: 8px 10px; }
+.side-title { font-size: 13px; letter-spacing: 2px; font-weight: bold; color: #ffd76a; font-family: Arial, sans-serif; }
+.deck-line { font-size: 14px; margin-top: 4px; font-family: Arial, sans-serif; }
+#log-box { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+#log { list-style: none; margin: 6px 0 0; padding: 0; overflow-y: auto; font-size: 13px;
+  font-family: Arial, sans-serif; line-height: 1.45; }
+#log li { border-bottom: 1px solid rgba(255,255,255,.12); padding: 2px 0; }
+.big-btn { font-size: 20px; font-weight: 900; padding: 12px; border-radius: 10px; border: 3px solid #78350f;
+  background: linear-gradient(180deg,#fde68a,#f59e0b); color: #451a03; cursor: pointer; font-family: Arial, sans-serif; }
+.big-btn:hover { filter: brightness(1.1); }
+.big-btn.gold { font-size: 24px; padding: 14px 26px; }
+.small-btn { font-size: 15px; padding: 8px; border-radius: 8px; border: 2px solid #c9a227;
+  background: #1c1917; color: #fde68a; cursor: pointer; font-family: Arial, sans-serif; }
+#controls { font-size: 12.5px; line-height: 1.5; color: #d1fae5; font-family: Arial, sans-serif; }
+
+/* ---- overlays: title / win / loss ---- */
+#overlay { position: fixed; inset: 0; background: rgba(0,0,0,.72); display: flex; align-items: center;
+  justify-content: center; z-index: 20; }
+#overlay.hidden, #title-screen.hidden { display: none; }
+#overlay-card { text-align: center; padding: 34px 48px; border-radius: 18px; max-width: 860px; }
+#overlay-card.win { background: linear-gradient(160deg,#451a03,#92400e); border: 4px solid #fbbf24;
+  box-shadow: 0 0 60px 10px rgba(251,191,36,.6); }
+#overlay-card.loss { background: linear-gradient(160deg,#1c1917,#450a0a); border: 4px solid #ef4444; }
+#overlay-card h2 { font-size: 64px; margin: 0; color: #fff; letter-spacing: 2px; }
+#overlay-card .ov-sub { font-size: 22px; color: #fde68a; margin: 8px 0; }
+#overlay-card .ov-score { font-size: 20px; color: #fff; font-family: Arial, sans-serif; margin: 10px 0; }
+#overlay-card .ov-wish { font-size: 18px; color: #ffd76a; font-weight: bold; margin: 8px 0; }
+#title-screen { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 20px;
+  background: radial-gradient(ellipse at 50% 25%, #14532d 0%, #052e16 55%, #02170c 100%); }
+.title-kicker { font-size: 17px; letter-spacing: 3px; color: #ffd76a; font-weight: bold; font-family: Arial, sans-serif; }
+#title-screen h1 { font-size: 96px; margin: 6px 0 0; letter-spacing: 6px; color: #fff;
+  text-shadow: 0 0 34px rgba(251,191,36,.9), 0 4px 0 #92400e; line-height: 1; }
+#title-screen h2 { font-size: 34px; margin: 4px 0 10px; color: #fde68a; font-weight: normal; font-style: italic; }
+.title-blurb { font-size: 19px; line-height: 1.45; margin: 4px 0 12px; color: #ecfdf5; }
+#title-wishblade { display: flex; justify-content: center; margin-bottom: 14px; }
+#title-wishblade .card { width: 168px; height: 232px; cursor: default; }
+#title-wishblade .card .c-art { height: 84px; font-size: 58px; }
+.title-how { font-size: 15px; line-height: 1.55; color: #d1fae5; font-family: Arial, sans-serif; max-width: 820px; }
