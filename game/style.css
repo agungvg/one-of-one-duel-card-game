@@ -52,7 +52,7 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
 .hand-row { min-height: 100px; }
 .field-row { min-height: 120px; }
 .rival-hand { transform: none; }
-#you-hand { transform: none; }
+#you-hand { transform: translateY(-8px); }
 #rival-field { transform: none; }
 #you-field { transform: none; }
 #centre-line { display: flex; align-items: center; justify-content: space-between;
@@ -151,7 +151,7 @@ body.shot .card, body.shot .card-back, body.shot .lp-fill { animation: none !imp
    hand card is caught mid-flip, dealing into the hand. */
 body.shot #you-hand .card:nth-child(1) { transform: rotateZ(-7deg) translateY(8px); }
 body.shot #you-hand .card:nth-child(2) { transform: rotateZ(-2.5deg) translateZ(12px); }
-body.shot #you-hand .card:nth-child(3) { transform: translateY(-26px) rotateY(55deg) rotateX(-6deg) translateZ(24px); }
+body.shot #you-hand .card:nth-child(3) { transform: translateY(-26px) rotateY(32deg) rotateX(-6deg) translateZ(24px); }
 body.shot #you-hand .card:nth-child(4) { transform: rotateZ(7deg) translateY(8px); }
 body.shot #you-field .card { transform: rotateX(-7deg) translateZ(22px); }
 body.shot #you-field .card.hero-3d { transform: rotateX(8deg) rotateY(-18deg) translateZ(38px); }
