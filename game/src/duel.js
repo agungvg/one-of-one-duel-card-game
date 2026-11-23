@@ -166,7 +166,7 @@ export function checkWinner(duel) {
     logLine(duel, 'VICTORY! The Genesis Coin is yours!');
   } else if (duel.you.life <= 0) {
     duel.winner = 'rival';
-    logLine(duel, 'DEFEAT. Vex keeps the Genesis Coin… this time.');
+    logLine(duel, 'DEFEAT. Marlow keeps the Genesis Coin… this time.');
   }
   return duel.winner;
 }

@@ -53,8 +53,12 @@ export function cardElement(entry, opts = {}) {
     stats.appendChild(el('span', 'spell-tag', '✦ PROTOCOL'));
     node.appendChild(stats);
   } else {
-    // The coin face: a metallic disc stamped with the coin's ticker.
+    // The coin face: a metallic disc stamped with the coin's ticker, over
+    // one oversized family symbol glowing behind it (the Lanternfall model).
     const art = el('div', 'c-art');
+    const glyphBig = el('span', 'c-glyph-big', info.glyph);
+    glyphBig.style.color = info.colour;
+    art.appendChild(glyphBig);
     const disc = el('div', 'coin-disc');
     disc.appendChild(el('span', 'coin-ticker', card.ticker));
     art.appendChild(disc);
@@ -95,7 +99,7 @@ export function renderDuel(duel, ui) {
     ? 'The duel is decided.'
     : duel.phase === 'you'
       ? 'Summon, cast, attack — then END TURN.'
-      : 'Vex the Collector is playing…';
+      : 'Marlow the Ferryman is playing…';
   $('duel-score').textContent = `SCORE · YOU ${duel.score.you} — ${duel.score.rival} RIVAL`;
   $('deck-you').textContent = duel.you.deck.length;
   $('deck-rival').textContent = duel.rival.deck.length;
@@ -195,11 +199,13 @@ export function renderEndScreen(kind, duel) {
     for (let i = 0; i < 10; i += 1) coins.appendChild(el('div', `rise-coin rc${i}`, '◉'));
     inner.appendChild(coins);
   }
-  inner.appendChild(el('div', 'end-kicker', won ? '★ THE ONE-OF-ONE COIN IS YOURS ★' : '✖ VEX KEEPS THE GENESIS COIN ✖'));
-  inner.appendChild(el('h2', 'end-title', won ? '🏆 VICTORY' : '✖ DEFEAT'));
+  inner.appendChild(el('div', 'end-kicker', won ? '★ THE ONE-OF-ONE COIN IS YOURS ★' : '✖ MARLOW KEEPS THE FARE ✖'));
+  const endTitle = el('h2', 'end-title', won ? 'VICTORY' : '✖ DEFEAT');
+  if (!won) endTitle.appendChild(el('div', 'end-crack'));
+  inner.appendChild(endTitle);
   inner.appendChild(el('div', 'end-sub', won
-    ? 'You beat Vex the Collector — the Genesis Coin joins your vault!'
-    : 'Vex the Collector keeps the Genesis Coin… this time.'));
+    ? 'You beat Marlow the Ferryman — the Genesis Coin pays your fare!'
+    : 'Marlow the Ferryman keeps the Genesis Coin… this time.'));
   const coinWrap = el('div', 'end-coin');
   coinWrap.appendChild(cardElement(
     { uid: 'end-genesis', id: genesis.id, hasAttacked: false, buffAtk: 0, buffDef: 0 },

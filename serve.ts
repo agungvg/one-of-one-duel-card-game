@@ -32,6 +32,8 @@ const MIME: Record<string, string> = {
   '.bin': 'application/octet-stream',
   '.wasm': 'application/wasm',
   '.wav': 'audio/wav',
+  '.webm': 'video/webm',
+  '.mp4': 'video/mp4',
   '.mp3': 'audio/mpeg',
   '.ogg': 'audio/ogg',
   '.txt': 'text/plain; charset=utf-8',

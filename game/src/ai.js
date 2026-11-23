@@ -1,4 +1,4 @@
-// ai.js — Vex the Collector, the rival. One job: plan and play the rival's turn.
+// ai.js — Marlow the Ferryman, the rival. One job: plan and play the rival's turn.
 // The plan is VISIBLE before it happens (the intent banner), so the player
 // can read the rival's choices and counter them.
 

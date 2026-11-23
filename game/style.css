@@ -1,54 +1,122 @@
-/* ONE-OF-ONE DUEL — 3D table, crypto-coin cards, end screens. All local, no network.
-   The table is CSS 3D: perspective on the wrap, the felt recedes, cards tilt
-   in 3D, hover tilts follow the mouse, deals flip in. Staged screenshots
+/* ONE-OF-ONE DUEL — NIGHT FERRY retheme. All local, no network.
+   The duel now happens on a night ferry: navy sky, full moon, shimmering
+   water, wooden deck planks, glowing amber lanterns, gold serif display
+   type. The table is a gold-rimmed ellipse on the water. Cards keep the
+   crypto-coin roster and the CSS 3D of the earlier passes (perspective
+   table, tilted cards, hover tilt, deal flip); the Lanternfall MODEL is
+   what we follow — big central family symbol with glow, big number
+   top-left repeated inverted, cream faces, deep-purple backs with a gold
+   lantern oval, a right rail with legends + log + big buttons, dramatic
+   dawn-gold win / cold-steel loss screens. Staged screenshots
    (body.shot) freeze every animation at its best pose. */
 * { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; overflow: hidden; background: #07130d; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #05081f; }
 body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
 #app { width: 100vw; height: 100vh; min-width: 1180px; min-height: 760px;
-  background: radial-gradient(ellipse at 50% 30%, #14532d 0%, #0b3d22 45%, #062415 100%);
-  display: flex; flex-direction: column; }
+  background: linear-gradient(180deg, #0a1230 0%, #0d1b4a 52%, #071233 78%, #05081f 100%);
+  display: flex; flex-direction: column; position: relative; }
 #status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
+/* ---- Remotion ambient loop: the night ferry in motion (moon, stars,
+   water shimmer, swaying lantern, rising embers), rendered once with
+   Remotion and shipped as a looping video. The CSS sky below is the
+   fallback: if the video is ever absent, the scene still reads. ---- */
+#ambient-video { position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 0; opacity: .8; pointer-events: none; }
+
+/* ---- night sky layer: stars, moon, lantern pole, embers (all CSS) ---- */
+#sky { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+/* two star layers: tiny white dots, gently twinkling */
+#sky::before, #sky::after { content: ""; position: absolute; width: 2px; height: 2px;
+  border-radius: 50%; background: #fff; animation: twinkle 3.4s ease-in-out infinite; }
+#sky::before { box-shadow: 90px 30px #fff, 210px 70px #fff, 340px 26px #fff, 470px 60px #fff,
+  590px 34px #fff, 720px 74px #fff, 850px 28px #fff, 980px 66px #fff, 1110px 40px #fff,
+  1220px 70px #fff, 150px 110px #fff, 400px 120px #fff, 660px 104px #fff, 920px 118px #fff,
+  1160px 108px #fff, 60px 180px #fff, 300px 190px #fff, 1040px 190px #fff; }
+#sky::after { animation-delay: 1.7s; box-shadow: 160px 48px #fff, 280px 90px #fff, 520px 44px #fff,
+  640px 88px #fff, 780px 52px #fff, 900px 92px #fff, 1080px 48px #fff, 1180px 88px #fff,
+  40px 140px #fff, 240px 150px #fff, 560px 140px #fff, 820px 150px #fff, 1120px 150px #fff; }
+@keyframes twinkle { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.moon { position: absolute; top: 136px; right: 268px; width: 64px; height: 64px; border-radius: 50%;
+  background: radial-gradient(circle at 42% 38%, #fffbe8 0%, #f3ead0 45%, #d9cba6 100%);
+  box-shadow: 0 0 60px 22px rgba(243,234,208,.35); animation: moonbreathe 5s ease-in-out infinite; }
+@keyframes moonbreathe { 0%, 100% { box-shadow: 0 0 48px 18px rgba(243,234,208,.28); }
+  50% { box-shadow: 0 0 72px 26px rgba(243,234,208,.45); } }
+/* hanging paper lantern on a curved black pole, swaying gently */
+.lantern-pole { position: absolute; top: 96px; left: 26px; transform-origin: top center;
+  animation: sway 6s ease-in-out infinite; z-index: 1; }
+.lantern-pole .pole { width: 4px; height: 46px; margin: 0 auto; background: #0f0a08; border-radius: 2px; }
+.lantern-pole .lantern { width: 52px; height: 64px; margin-top: -2px; border-radius: 46% 46% 40% 40%;
+  background: radial-gradient(circle at 50% 42%, #ffe9a8 0%, #fbbf24 45%, #d97706 78%, #92400e 100%);
+  border: 2px solid #451a03; box-shadow: 0 0 34px 10px rgba(251,191,36,.45);
+  display: flex; align-items: center; justify-content: center; font-size: 30px;
+  animation: flicker 2.4s ease-in-out infinite; }
+@keyframes sway { 0%, 100% { transform: rotate(-3.5deg); } 50% { transform: rotate(3.5deg); } }
+@keyframes flicker { 0%, 100% { opacity: .92; } 50% { opacity: 1; } }
+/* gold embers rising over the water */
+#embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+#embers i { position: absolute; bottom: 12%; width: 6px; height: 6px; border-radius: 50%;
+  background: #fbbf24; box-shadow: 0 0 10px 2px rgba(251,191,36,.8);
+  animation: emberrise 5s ease-in infinite; font-style: normal; }
+@keyframes emberrise { 0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: .95; } 100% { transform: translateY(-340px); opacity: 0; } }
+#embers i:nth-child(1) { left: 8%; animation-delay: 0s; }
+#embers i:nth-child(2) { left: 18%; animation-delay: 1.1s; }
+#embers i:nth-child(3) { left: 30%; animation-delay: .5s; }
+#embers i:nth-child(4) { left: 42%; animation-delay: 1.8s; }
+#embers i:nth-child(5) { left: 58%; animation-delay: .8s; }
+#embers i:nth-child(6) { left: 70%; animation-delay: 2.2s; }
+#embers i:nth-child(7) { left: 82%; animation-delay: 1.4s; }
+#embers i:nth-child(8) { left: 92%; animation-delay: .3s; }
+/* wooden deck planks along the bottom edge */
+#planks { flex: none; height: 22px; position: relative; z-index: 1;
+  background: repeating-linear-gradient(90deg, #3b2416 0 58px, #241608 58px 62px, #4a2f1c 62px 120px);
+  border-top: 2px solid #d9a441; box-shadow: 0 -2px 12px rgba(0,0,0,.6); }
+
 /* ---- top bar: life totals ---- */
-#topbar { display: flex; gap: 14px; padding: 4px 16px 2px; align-items: stretch; }
-.lp-panel { flex: 1; background: rgba(0,0,0,.45); border: 2px solid #c9a227; border-radius: 12px;
-  padding: 4px 12px 5px; }
+#topbar { display: flex; gap: 14px; padding: 4px 16px 2px; align-items: stretch;
+  position: relative; z-index: 1; }
+.lp-panel { flex: 1; background: rgba(2,6,32,.72); border: 2px solid #d9a441; border-radius: 12px;
+  padding: 4px 12px 5px; box-shadow: 0 0 14px rgba(217,164,65,.25); }
 .lp-panel.rival { text-align: right; }
 .lp-name { font-size: 15px; letter-spacing: 2px; font-weight: bold; color: #ffd76a; }
-.lp-num { font-size: 32px; font-weight: 900; line-height: 1; color: #fff; font-family: Arial, sans-serif; }
-.lp-bar { height: 12px; background: #222; border-radius: 6px; margin-top: 4px; overflow: hidden; }
+.lp-num { font-size: 32px; font-weight: 900; line-height: 1; color: #fff; font-family: Arial, sans-serif;
+  text-shadow: 0 0 12px rgba(255,215,106,.5); }
+.lp-bar { height: 12px; background: #0a1230; border: 1px solid rgba(217,164,65,.5); border-radius: 6px; margin-top: 4px; overflow: hidden; }
 .lp-fill { height: 100%; width: 100%; transition: width .6s ease; }
-.you-fill { background: linear-gradient(90deg, #22c55e, #86efac); }
+.you-fill { background: linear-gradient(90deg, #f59e0b, #fde68a); }
 .rival-fill { background: linear-gradient(90deg, #ef4444, #fca5a5); }
-.lp-sub { font-size: 15px; margin-top: 4px; color: #a7f3d0; font-family: Arial, sans-serif; }
+.lp-sub { font-size: 15px; margin-top: 4px; color: #fde68a; font-family: Arial, sans-serif; }
 #mid-top { width: 300px; text-align: center; }
-#game-title { font-size: 22px; font-weight: 900; letter-spacing: 3px; color: #ffd76a; }
+#game-title { font-size: 22px; font-weight: 900; letter-spacing: 3px; color: #ffd76a;
+  text-shadow: 0 0 16px rgba(217,164,65,.7); }
 #turn-line { font-size: 17px; font-weight: bold; color: #fff; font-family: Arial, sans-serif; }
-#phase-line { font-size: 13px; color: #d1fae5; }
+#phase-line { font-size: 13px; color: #c7d2fe; }
 
 /* ---- rival intent banner ---- */
 .intent { margin: 0 16px; padding: 3px 12px; border-radius: 8px; background: #7f1d1d;
   border: 2px solid #f87171; font-family: Arial, sans-serif; font-size: 17px; font-weight: bold;
-  color: #fff; text-align: center; }
+  color: #fff; text-align: center; position: relative; z-index: 1; }
 .intent.hidden { display: none; }
 .intent.gold { background: #713f12; border-color: #fbbf24; }
 
-/* ---- 3D table: the felt is a receding plane. Perspective on the wrap,
-   rotateX on the table around its BOTTOM edge, so the near side (your hand)
-   stays put at full size while the far side (rival) shrinks away — a real
-   depth cue, with no overflow past the frame. */
+/* ---- the ferry table: a gold-rimmed ellipse on the water.
+   Perspective on the wrap, rotateX on the table around its BOTTOM edge,
+   so the near side (your hand) stays put at full size while the far side
+   (rival) shrinks away — a real depth cue, with no overflow past the frame. */
 #table-wrap { flex: 1; display: flex; gap: 10px; padding: 2px 16px 6px; min-height: 0;
-  perspective: 820px; }
+  perspective: 820px; position: relative; z-index: 1; }
 #table { flex: 1; display: flex; flex-direction: column; min-width: 0;
   transform-style: preserve-3d; transform: rotateX(10deg); transform-origin: 50% 100%;
-  /* warm horizon glow at the far end of the felt */
-  background: radial-gradient(ellipse 70% 20% at 50% 0%, rgba(255,215,106,.16), transparent 70%); }
+  border: 4px solid #d9a441; border-radius: 50%; padding: 14px 34px 8px;
+  background: radial-gradient(ellipse at 50% 18%, #1e3a8a 0%, #0d1b4a 55%, #081233 100%);
+  box-shadow: 0 0 34px rgba(217,164,65,.35), inset 0 0 60px rgba(2,6,32,.8); }
 .row-label { font-size: 11px; letter-spacing: 2px; font-weight: bold; color: #fde68a;
   font-family: Arial, sans-serif; margin: 0 2px; }
-.row-label span { color: #d1fae5; letter-spacing: 0; font-weight: normal; }
+.row-label span { color: #c7d2fe; letter-spacing: 0; font-weight: normal; }
 .hand-row, .field-row { display: flex; gap: 8px; justify-content: center; align-items: center;
   transform-style: preserve-3d; }
+.field-row { gap: 14px; }
 .hand-row { min-height: 100px; }
 .field-row { min-height: 120px; }
 .rival-hand { transform: none; }
@@ -62,7 +130,9 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
 #vs { font-size: 26px; font-weight: 900; color: #fff; font-family: Arial, sans-serif; }
 #duel-score { font-size: 15px; font-weight: bold; color: #fff; font-family: Arial, sans-serif; }
 
-/* ---- 3D cards ---- */
+/* ---- 3D cards: big central family symbol with glow, big number top-left
+   repeated inverted bottom-left, cream faces, purple backs with a gold
+   lantern oval. ---- */
 .card { width: 120px; height: 164px; border-radius: 10px; background: #fff8e7; color: #1c1917;
   border: 3px solid #78350f; padding: 4px 7px; position: relative; cursor: pointer;
   font-family: Arial, sans-serif; flex: none; box-shadow: 0 10px 22px rgba(0,0,0,.55);
@@ -85,8 +155,8 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
 @keyframes lunge { 0% { transform: none; } 40% { transform: translateY(-26px) scale(1.06); }
   100% { transform: none; } }
 /* The mythic coin on the field: tilted toward the viewer, glowing. */
-.card.hero-3d { transform: rotateX(10deg) rotateY(-16deg) translateZ(30px); }
-.card.hero-3d:hover { transform: rotateX(4deg) rotateY(-18deg) translateZ(38px); }
+.card.hero-3d { transform: rotateX(10deg) rotateY(-10deg) translateZ(30px); }
+.card.hero-3d:hover { transform: rotateX(4deg) rotateY(-12deg) translateZ(38px); }
 .card.lost-coin { filter: grayscale(.85) brightness(.6); transform: rotateX(10deg) rotateY(14deg); }
 .card .c-cost { position: absolute; top: 4px; right: 6px; font-size: 19px; font-weight: 900; color: #92400e; }
 .card .c-name { font-size: 12px; font-weight: 900; line-height: 1.1; min-height: 26px; padding-right: 32px; }
@@ -97,14 +167,20 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
   color: #fff; background: var(--rar, #9ca3af); }
 .card .c-rarity .rar-glyph { font-size: 11px; }
 /* The art box is TALLER than the coin disc, so the disc (and its ticker)
-   is fully contained — never clipped by the stats row below it. */
+   is fully contained — never clipped by the stats row below it. Behind the
+   disc, one oversized family symbol glows (the Lanternfall model's big
+   central symbol). */
 .card .c-art { height: 46px; border-radius: 6px; margin-top: 2px; display: flex; align-items: center;
-  justify-content: center; font-size: 36px; background: #fef3c7; border: 2px solid rgba(0,0,0,.15); }
+  justify-content: center; font-size: 36px; background: #fef3c7; border: 2px solid rgba(0,0,0,.15);
+  position: relative; overflow: hidden; }
+.card .c-glyph-big { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 44px; font-weight: 900; opacity: .18; line-height: 1;
+  text-shadow: 0 0 14px currentColor; }
 /* The coin face: a metallic disc stamped with the ticker. */
 .coin-disc { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
   justify-content: center; font-size: 10px; font-weight: 900; letter-spacing: 0; white-space: nowrap; line-height: 1; color: #451a03;
   background: radial-gradient(circle at 35% 30%, #f8fafc, #cbd5e1 55%, #64748b);
-  border: 3px solid rgba(0,0,0,.3);
+  border: 3px solid rgba(0,0,0,.3); position: relative; z-index: 1;
   box-shadow: inset 0 0 0 3px rgba(255,255,255,.45), 0 2px 6px rgba(0,0,0,.4); }
 .coin-disc .coin-ticker { display: block; width: 100%; text-align: center; }
 .card .c-stats { display: flex; justify-content: space-between; margin-top: 1px; font-size: 16px; font-weight: 900; }
@@ -140,94 +216,144 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #f3e9c8; }
 /* hand cards are bigger for thumbnail legibility */
 #you-hand .card { width: 142px; height: 164px; }
 #you-hand .card .c-art { height: 48px; font-size: 40px; }
+#you-hand .card .c-glyph-big { font-size: 48px; }
 #you-hand .card .coin-disc { width: 44px; height: 44px; font-size: 11px; line-height: 1; }
 #you-hand .card .c-stats { font-size: 19px; }
 #you-hand .card .c-name { font-size: 15px; }
 #you-hand .card .c-stats { font-size: 20px; }
 /* frozen 3D poses for staged screenshots: deterministic, no animation */
-body.shot .card, body.shot .card-back, body.shot .lp-fill { animation: none !important; transition: none; }
+body.shot .card, body.shot .card-back, body.shot .lp-fill,
+body.shot #sky::before, body.shot #sky::after, body.shot .moon,
+body.shot .lantern-pole, body.shot .lantern-pole .lantern, body.shot #embers i,
+body.shot .title-moon, body.shot .ferryman .flame { animation: none !important; transition: none; }
 /* frozen 3D poses for staged screenshots: deterministic, no animation.
    The hand is a real arc (edges back and up, middle forward), and the third
    hand card is caught mid-flip, dealing into the hand. */
 body.shot #you-hand .card:nth-child(1) { transform: rotateZ(-7deg) translateY(8px); }
 body.shot #you-hand .card:nth-child(2) { transform: rotateZ(-2.5deg) translateZ(12px); }
-body.shot #you-hand .card:nth-child(3) { transform: translateY(-26px) rotateY(32deg) rotateX(-6deg) translateZ(24px); }
+body.shot #you-hand .card:nth-child(3) { transform: translateY(-12px) rotateY(32deg) rotateX(-6deg) translateZ(24px); }
 body.shot #you-hand .card:nth-child(4) { transform: rotateZ(7deg) translateY(8px); }
 body.shot #you-field .card { transform: rotateX(-7deg) translateZ(22px); }
-body.shot #you-field .card.hero-3d { transform: rotateX(8deg) rotateY(-18deg) translateZ(38px); }
+body.shot #you-field .card.hero-3d { transform: rotateX(8deg) translateZ(30px); }
 body.shot #rival-field .card { transform: rotateX(10deg) translateZ(8px); }
 body.shot .card-back:nth-child(1) { transform: rotateY(-14deg) translateZ(6px); }
 body.shot .card-back:nth-child(2) { transform: rotateY(10deg) translateZ(6px); }
-.card-back { width: 76px; height: 102px; border-radius: 8px; background: repeating-linear-gradient(45deg,#7f1d1d 0 10px,#991b1b 10px 20px);
-  border: 3px solid #fbbf24; display: flex; align-items: center; justify-content: center;
-  font-size: 34px; color: #fde68a; box-shadow: 0 3px 8px rgba(0,0,0,.5);
+/* card backs: deep purple with a glowing gold lantern oval */
+.card-back { width: 76px; height: 102px; border-radius: 8px;
+  background: radial-gradient(ellipse 34% 44% at 50% 50%, rgba(251,191,36,.9) 0%, rgba(217,164,65,.55) 42%, transparent 68%),
+    repeating-linear-gradient(45deg, #2e1065 0 10px, #3b1a7a 10px 20px);
+  border: 3px solid #d9a441; display: flex; align-items: center; justify-content: center;
+  font-size: 34px; color: #fde68a; box-shadow: 0 3px 8px rgba(0,0,0,.5), 0 0 16px rgba(217,164,65,.3);
   transform: rotateY(-8deg); transform-style: preserve-3d; }
-.field-slot { width: 120px; height: 164px; border-radius: 10px; border: 3px dashed rgba(255,255,255,.35);
-  display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.5);
+.field-slot { width: 120px; height: 164px; border-radius: 10px; border: 3px dashed rgba(255,215,106,.4);
+  display: flex; align-items: center; justify-content: center; color: rgba(253,230,138,.6);
   font-size: 15px; font-family: Arial, sans-serif; transform: translateZ(4px);
   box-shadow: 0 8px 16px rgba(0,0,0,.45), inset 0 2px 10px rgba(0,0,0,.4); }
 .field-slot.playable { border-color: #fbbf24; color: #fde68a; cursor: pointer; }
 
-/* ---- sidebar ---- */
+/* ---- right rail: legends, deck, log, big buttons ---- */
 #side { width: 240px; flex: none; display: flex; flex-direction: column; gap: 8px; }
-#deck-box, #log-box { background: rgba(0,0,0,.45); border: 2px solid #c9a227; border-radius: 10px; padding: 8px 10px; }
+#deck-box, #log-box, #family-box, #rarity-box { background: rgba(2,6,32,.72); border: 2px solid #d9a441;
+  border-radius: 10px; padding: 8px 10px; }
 .side-title { font-size: 13px; letter-spacing: 2px; font-weight: bold; color: #ffd76a; font-family: Arial, sans-serif; }
-.deck-line { font-size: 14px; margin-top: 4px; font-family: Arial, sans-serif; }
+.deck-line { font-size: 14px; margin-top: 4px; font-family: Arial, sans-serif; color: #e0e7ff; }
+.legend-line { font-size: 13px; margin-top: 4px; font-family: Arial, sans-serif; color: #e0e7ff;
+  display: flex; justify-content: space-between; gap: 6px; }
+.legend-line b { color: #ffd76a; }
+#rarity-box .rar-chip { font-size: 10px; padding: 2px 7px; margin: 3px 2px 0 0; }
 #log-box { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 #log { list-style: none; margin: 6px 0 0; padding: 0; overflow-y: auto; font-size: 13px;
-  font-family: Arial, sans-serif; line-height: 1.45; }
+  font-family: Arial, sans-serif; line-height: 1.45; color: #e0e7ff; }
 #log li { border-bottom: 1px solid rgba(255,255,255,.12); padding: 2px 0; }
 .big-btn { font-size: 20px; font-weight: 900; padding: 12px; border-radius: 10px; border: 3px solid #78350f;
-  background: linear-gradient(180deg,#fde68a,#f59e0b); color: #451a03; cursor: pointer; font-family: Arial, sans-serif; }
+  background: linear-gradient(180deg,#fde68a,#d9a441); color: #451a03; cursor: pointer; font-family: Arial, sans-serif;
+  box-shadow: 0 0 16px rgba(217,164,65,.4); }
 .big-btn:hover { filter: brightness(1.1); }
 .big-btn.gold { font-size: 24px; padding: 14px 26px; }
-.small-btn { font-size: 15px; padding: 8px; border-radius: 8px; border: 2px solid #c9a227;
-  background: #1c1917; color: #fde68a; cursor: pointer; font-family: Arial, sans-serif; }
-#controls { font-size: 12.5px; line-height: 1.5; color: #d1fae5; font-family: Arial, sans-serif; }
+.small-btn { font-size: 15px; padding: 8px; border-radius: 8px; border: 2px solid #d9a441;
+  background: #0a1230; color: #fde68a; cursor: pointer; font-family: Arial, sans-serif; }
+#controls { font-size: 12.5px; line-height: 1.5; color: #c7d2fe; font-family: Arial, sans-serif; }
 
-/* ---- title screen ---- */
+/* ---- title screen: the ferry at night ---- */
 #title-screen { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; text-align: center; padding: 20px;
-  background: radial-gradient(ellipse at 50% 25%, #14532d 0%, #052e16 55%, #02170c 100%); }
+  align-items: center; justify-content: center; text-align: center; padding: 20px; overflow: hidden;
+  background: linear-gradient(180deg, #0a1230 0%, #0d1b4a 52%, #071233 78%, #05081f 100%); }
 #title-screen.hidden { display: none; }
-.title-kicker { font-size: 17px; letter-spacing: 3px; color: #ffd76a; font-weight: bold; font-family: Arial, sans-serif; }
-#title-screen h1 { font-size: 96px; margin: 6px 0 0; letter-spacing: 6px; color: #fff;
-  text-shadow: 0 0 34px rgba(251,191,36,.9), 0 4px 0 #92400e; line-height: 1; }
-#title-screen h2 { font-size: 34px; margin: 4px 0 10px; color: #fde68a; font-weight: normal; font-style: italic; }
-.title-blurb { font-size: 19px; line-height: 1.45; margin: 4px 0 12px; color: #ecfdf5; }
-#title-genesis { display: flex; justify-content: center; margin-bottom: 12px; perspective: 800px; }
+#title-screen::before, #title-screen::after { content: ""; position: absolute; width: 2px; height: 2px;
+  border-radius: 50%; background: #fff; animation: twinkle 3.4s ease-in-out infinite; }
+#title-screen::before { box-shadow: 90px 40px #fff, 260px 80px #fff, 430px 36px #fff, 620px 70px #fff,
+  800px 40px #fff, 990px 76px #fff, 1150px 44px #fff, 150px 140px #fff, 520px 130px #fff,
+  880px 140px #fff, 1080px 130px #fff; }
+#title-screen::after { animation-delay: 1.7s; box-shadow: 170px 60px #fff, 360px 100px #fff, 560px 56px #fff,
+  740px 96px #fff, 920px 60px #fff, 1100px 96px #fff, 60px 200px #fff, 1220px 200px #fff; }
+.title-moon { position: absolute; top: 46px; left: 50%; margin-left: -320px; width: 120px; height: 120px;
+  border-radius: 50%; background: radial-gradient(circle at 42% 38%, #fffbe8 0%, #f3ead0 45%, #d9cba6 100%);
+  box-shadow: 0 0 70px 26px rgba(243,234,208,.4); animation: moonbreathe 5s ease-in-out infinite; }
+.title-kicker { position: relative; font-size: 17px; letter-spacing: 3px; color: #ffd76a; font-weight: bold; font-family: Arial, sans-serif; }
+#title-screen h1 { position: relative; font-size: 96px; margin: 6px 0 0; letter-spacing: 6px; color: #fff;
+  text-shadow: 0 0 34px rgba(217,164,65,.95), 0 4px 0 #92400e; line-height: 1; }
+#title-screen h2 { position: relative; font-size: 34px; margin: 4px 0 10px; color: #fde68a; font-weight: normal; font-style: italic; }
+.title-blurb { position: relative; font-size: 19px; line-height: 1.45; margin: 4px 0 12px; color: #ecfdf5; }
+#title-duo { position: relative; display: flex; gap: 34px; align-items: center; justify-content: center; margin-bottom: 12px; }
+/* Marlow the Ferryman: wide-brim hat, dark cloak, brass lantern, coin pouch.
+   An original SVG portrait, drawn for this game. */
+.ferryman { width: 170px; flex: none; text-align: center; }
+.ferryman svg { width: 150px; height: 190px; filter: drop-shadow(0 0 18px rgba(251,191,36,.35)); }
+.ferryman .flame { animation: flicker 2.4s ease-in-out infinite; transform-origin: 75px 108px; }
+.ferryman figcaption { font-size: 13px; color: #fde68a; font-family: Arial, sans-serif; margin-top: 2px; }
+.ferryman figcaption b { color: #ffd76a; letter-spacing: 1px; }
+#title-genesis { display: flex; justify-content: center; perspective: 800px; }
 #title-genesis .card { width: 168px; height: 232px; cursor: default;
   transform: rotateX(9deg) rotateY(-18deg) translateZ(18px); }
 #title-genesis .card .c-art { height: 84px; font-size: 58px; }
+#title-genesis .card .c-glyph-big { font-size: 76px; }
 #title-genesis .card .coin-disc { width: 72px; height: 72px; font-size: 18px; }
-#rarity-legend { display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; }
+#rarity-legend { position: relative; display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; }
 .rar-chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 20px;
   font-size: 13px; font-weight: 900; letter-spacing: 1px; color: #fff; background: var(--rar, #9ca3af);
   font-family: Arial, sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
 .rar-chip.rar-mythic { background: linear-gradient(120deg, #facc15, #f59e0b, #fde047); color: #451a03; }
-.title-how { font-size: 15px; line-height: 1.55; color: #d1fae5; font-family: Arial, sans-serif; max-width: 820px; }
+.title-how { position: relative; font-size: 15px; line-height: 1.55; color: #c7d2fe; font-family: Arial, sans-serif; max-width: 820px; }
 
 /* ---- full end screens (win / loss): their own stage ---- */
 #end-screen { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center;
   justify-content: center; text-align: center; overflow: hidden; }
 #end-screen.hidden { display: none; }
-#end-screen.end-win { background: radial-gradient(ellipse at 50% 20%, #78350f 0%, #451a03 55%, #1c0a00 100%); }
-#end-screen.end-loss { background: radial-gradient(ellipse at 50% 20%, #450a0a 0%, #1c0505 55%, #0d0202 100%); }
+/* WIN: dawn breaks over the ferry — gold sunburst rays + warm gold sky */
+#end-screen.end-win { background: radial-gradient(ellipse at 50% 22%, #fde68a 0%, #d97706 42%, #78350f 72%, #451a03 100%); }
+#end-screen.end-win::before { content: ""; position: absolute; inset: -40%;
+  background: repeating-conic-gradient(from 0deg at 50% 30%, rgba(255,255,255,.14) 0deg 6deg, transparent 6deg 14deg);
+  animation: slowspin 60s linear infinite; }
+@keyframes slowspin { to { transform: rotate(360deg); } }
+body.shot #end-screen.end-win::before { animation: none; }
+/* LOSS: cold steel-blue water at night, the lantern gone out */
+#end-screen.end-loss { background: radial-gradient(ellipse at 50% 20%, #1e3a5f 0%, #0f2140 55%, #05081f 100%); }
 #end-inner { position: relative; display: flex; flex-direction: column; align-items: center; max-width: 900px; padding: 10px 20px; }
 .end-kicker { font-size: 17px; letter-spacing: 3px; color: #ffd76a; font-weight: bold; font-family: Arial, sans-serif; }
+/* on the bright dawn rays the gold kicker and sub wash out — go dark brown */
+.end-win .end-kicker { color: #451a03; text-shadow: 0 1px 2px rgba(255,255,255,.5); }
+.end-win .end-sub { color: #451a03; }
 .end-title { font-size: 84px; margin: 4px 0 0; letter-spacing: 4px; color: #fff; line-height: 1;
-  text-shadow: 0 0 40px rgba(251,191,36,.9), 0 4px 0 #92400e; }
-.end-loss .end-title { text-shadow: 0 0 30px rgba(239,68,68,.8), 0 4px 0 #450a0a; }
+  text-shadow: 0 0 40px rgba(251,191,36,.9), 0 4px 0 #92400e; position: relative; }
+.end-loss .end-title { color: #dbeafe; text-shadow: 0 0 30px rgba(147,197,253,.8), 0 4px 0 #0f2140; }
+/* the crack through DEFEAT: a jagged pale line across the word */
+.end-crack { position: absolute; left: 50%; top: 52%; width: 340px; margin-left: -170px; height: 14px;
+  background: linear-gradient(90deg, transparent, rgba(219,234,254,.9) 18%, rgba(219,234,254,.9) 82%, transparent);
+  clip-path: polygon(0 55%, 8% 30%, 16% 62%, 26% 28%, 36% 58%, 46% 32%, 55% 66%, 64% 30%, 74% 60%, 84% 34%, 92% 58%, 100% 40%, 100% 62%, 92% 74%, 84% 52%, 74% 76%, 64% 48%, 55% 80%, 46% 50%, 36% 76%, 26% 46%, 16% 78%, 8% 48%);
+  transform: rotate(-3deg); pointer-events: none; }
 .end-sub { font-size: 21px; color: #fde68a; margin: 8px 0 12px; font-style: italic; }
+.end-loss .end-sub { color: #bfdbfe; }
 .end-coin { display: flex; justify-content: center; margin-bottom: 14px; perspective: 900px; }
 .end-coin .card { width: 172px; height: 236px; cursor: default; }
 .end-coin .card .c-art { height: 86px; font-size: 58px; }
+.end-coin .card .c-glyph-big { font-size: 78px; }
 .end-coin .card .coin-disc { width: 74px; height: 74px; font-size: 19px; }
 .end-stats { display: flex; gap: 10px; margin-bottom: 14px; }
-.end-stat { background: rgba(0,0,0,.45); border: 2px solid #c9a227; border-radius: 10px; padding: 8px 14px; min-width: 150px; }
+.end-stat { background: rgba(2,6,32,.55); border: 2px solid #d9a441; border-radius: 10px; padding: 8px 14px; min-width: 150px; }
 .end-stat-num { font-size: 20px; font-weight: 900; color: #fff; font-family: Arial, sans-serif; }
 .end-stat-label { font-size: 12px; letter-spacing: 2px; color: #ffd76a; font-weight: bold; font-family: Arial, sans-serif; }
 .end-tip { font-size: 17px; color: #fecaca; margin-bottom: 12px; font-family: Arial, sans-serif; }
+.end-loss .end-tip { color: #bfdbfe; }
 /* gold coins rising on the win screen (frozen poses in shot mode) */
 .rise-coins { position: absolute; inset: 0; pointer-events: none; }
 .rise-coin { position: absolute; font-size: 34px; color: #fbbf24; opacity: .85;
@@ -240,3 +366,4 @@ body.shot .card-back:nth-child(2) { transform: rotateY(10deg) translateZ(6px); }
 .rc6 { left: 82%; top: 84%; animation-delay: 1.1s; } .rc7 { left: 90%; top: 80%; animation-delay: .5s; }
 .rc8 { left: 44%; top: 88%; animation-delay: 1.4s; } .rc9 { left: 54%; top: 86%; animation-delay: .8s; }
 body.shot .rise-coin { animation: none; opacity: .85; transform: translateY(-140px); }
+body.shot #embers i { animation: none; opacity: .7; transform: translateY(-160px); }

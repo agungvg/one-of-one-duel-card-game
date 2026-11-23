@@ -8,6 +8,11 @@
 </head>
 <body>
 <div id="app">
+  <video id="ambient-video" src="./ferry-ambient.webm" autoplay loop muted playsinline></video>
+  <div id="sky">
+    <div class="lantern-pole"><div class="pole"></div><div class="lantern">🏮</div></div>
+    <div id="embers"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
   <header id="topbar">
     <div class="lp-panel you">
       <div class="lp-name">YOU · LYSO</div>
@@ -21,7 +26,7 @@
       <div id="phase-line">Draw a card, summon monsters, attack!</div>
     </div>
     <div class="lp-panel rival">
-      <div class="lp-name">RIVAL · VEX THE COLLECTOR</div>
+      <div class="lp-name">RIVAL · MARLOW THE FERRYMAN</div>
       <div class="lp-num" id="lp-rival">8000</div>
       <div class="lp-bar"><div class="lp-fill rival-fill" id="lpbar-rival"></div></div>
       <div class="lp-sub" id="mana-rival">MANA ●●●</div>
@@ -35,7 +40,7 @@
       <div class="row-label">RIVAL'S FIELD</div>
       <div class="field-row" id="rival-field"></div>
       <div id="centre-line">
-        <div id="wish-pedestal">★ THE GENESIS COIN ★<br><span>one copy exists in the whole realm</span></div>
+        <div id="wish-pedestal">★ THE GENESIS COIN ★<br><span>the fare for the crossing</span></div>
         <div id="vs">VS</div>
         <div id="duel-score">SCORE · YOU 0 — 0 RIVAL</div>
       </div>
@@ -45,6 +50,21 @@
       <div class="hand-row you-hand" id="you-hand"></div>
     </section>
     <aside id="side">
+      <div id="family-box">
+        <div class="side-title">COIN FAMILIES</div>
+        <div class="legend-line"><span>▲ Forge — mints fire</span><b>red</b></div>
+        <div class="legend-line"><span>● Tide — flows</span><b>blue</b></div>
+        <div class="legend-line"><span>◆ Gale — strikes fast</span><b>green</b></div>
+        <div class="legend-line"><span>■ Stone — endures</span><b>amber</b></div>
+      </div>
+      <div id="rarity-box">
+        <div class="side-title">RARITIES</div>
+        <span class="rar-chip" style="--rar:#9ca3af">● COMMON</span>
+        <span class="rar-chip" style="--rar:#3b82f6">◆ RARE</span>
+        <span class="rar-chip" style="--rar:#a855f7">⬢ EPIC</span>
+        <span class="rar-chip" style="--rar:#f97316">★ LEGENDARY</span>
+        <span class="rar-chip rar-mythic">✦ MYTHIC</span>
+      </div>
       <div id="deck-box">
         <div class="side-title">DECK &amp; GRAVE</div>
         <div class="deck-line">Your deck: <b id="deck-you">25</b> · Grave: <b id="grave-you">0</b></div>
@@ -62,22 +82,52 @@
       </div>
     </aside>
   </main>
+  <div id="planks"></div>
   <div id="end-screen" class="hidden">
     <div id="end-inner"></div>
   </div>
   <div id="title-screen">
-    <div class="title-kicker">★ THE RAREST COIN IN THE REALM · ONE COPY EXISTS ★</div>
+    <div class="title-moon"></div>
+    <div class="title-kicker">★ THE RAREST COIN IN THE REALM · THE FARE FOR THE CROSSING ★</div>
     <h1>ONE-OF-ONE</h1>
     <h2>Duel for the Genesis Coin</h2>
-    <p class="title-blurb">A genesis coin, minted once and never again. Beat Vex the Collector<br>
-    in a duel of crypto coins, spells and nerve — and the Genesis Coin is yours.</p>
-    <div id="title-genesis"></div>
+    <p class="title-blurb">A genesis coin, minted once and never again. Cross the night ferry and beat Marlow the Ferryman<br>
+    in a duel of crypto coins, spells and nerve — pay the fare with the Genesis Coin, or lose it to him.</p>
+    <div id="title-duo">
+      <figure class="ferryman">
+        <svg viewBox="0 0 150 190" role="img" aria-label="Marlow the Ferryman">
+          <defs>
+            <radialGradient id="lampGlow" cx="50%" cy="45%" r="60%">
+              <stop offset="0%" stop-color="#ffe9a8"/>
+              <stop offset="55%" stop-color="#fbbf24"/>
+              <stop offset="100%" stop-color="#d97706"/>
+            </radialGradient>
+          </defs>
+          <path d="M75,66 C46,74 38,118 34,188 L116,188 C112,118 104,74 75,66 Z" fill="#16213e" stroke="#d9a441" stroke-width="2"/>
+          <path d="M75,66 L75,188" stroke="#0a1230" stroke-width="2"/>
+          <circle cx="58" cy="148" r="12" fill="#d9a441" stroke="#78350f" stroke-width="2"/>
+          <text x="58" y="153" font-size="12" text-anchor="middle" fill="#451a03" font-weight="bold">◉</text>
+          <line x1="102" y1="92" x2="126" y2="116" stroke="#16213e" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="75" cy="52" r="16" fill="#241a10"/>
+          <circle cx="69" cy="52" r="2.4" fill="#ffd76a"/>
+          <circle cx="81" cy="52" r="2.4" fill="#ffd76a"/>
+          <path d="M40,36 Q75,-8 110,36 Z" fill="#241a10"/>
+          <ellipse cx="75" cy="36" rx="62" ry="9" fill="#1a120b" stroke="#d9a441" stroke-width="1.5"/>
+          <rect x="118" y="114" width="24" height="32" rx="8" fill="url(#lampGlow)" stroke="#451a03" stroke-width="2"/>
+          <ellipse class="flame" cx="130" cy="130" rx="5" ry="8" fill="#fff7cc"/>
+          <rect x="124" y="110" width="12" height="5" rx="2" fill="#451a03"/>
+          <rect x="124" y="145" width="12" height="5" rx="2" fill="#451a03"/>
+        </svg>
+        <figcaption><b>MARLOW</b> — the Ferryman<br>collects the fare</figcaption>
+      </figure>
+      <div id="title-genesis"></div>
+    </div>
     <div id="rarity-legend"></div>
     <button id="btn-start" class="big-btn gold">⚔ START DUEL (Enter)</button>
     <p class="title-how">HOW TO PLAY — Both duelists have 8000 Life. Each turn draw 1 card and gain mana.<br>
     Summon coins (cost = stars), attack rival coins or directly. Protocols combine with coins.<br>
     Forge ▲ mints fire, Tide ● flows, Gale ◆ strikes fast, Stone ■ endures. Rarities run Common to<br>
-    Legendary — and the one Mythic Genesis Coin. First to 0 Life loses.</p>
+    Legendary — and the one Mythic Genesis Coin. First to 0 Life loses. The ferry waits for no one.</p>
   </div>
   <p id="status" role="status" aria-live="polite"></p>
 </div>
